@@ -7,7 +7,6 @@
 // ------------------------------------------------------ |
 #include "Developer/DesktopPlatform/Public/IDesktopPlatform.h"
 #include "Developer/DesktopPlatform/Public/DesktopPlatformModule.h"
-#include "Interfaces/IMainFrameModule.h"
 #include "Styling/SlateIconFinder.h"
 #include "Misc/MessageDialog.h"
 #include "Json.h"
@@ -52,10 +51,10 @@
 #include "Widgets/Views/STableRow.h"
 #include "Widgets/Views/SListView.h"
 #include "Styling/CoreStyle.h"
-#include "Styling/StyleColors.h"
-#include "Styling/AppStyle.h"
-#include "SPrimaryButton.h"
 #include <TlHelp32.h>
+
+#include "Interfaces/IMainFrameModule.h"
+#include "Logging/MessageLog.h"
 
 #ifdef _MSC_VER
 #undef GetObject
@@ -92,7 +91,7 @@ void FJsonAsAssetModule::StartupModule() {
 		);
 
 		FNotificationInfo Info(TitleText);
-		Info.SubText = MessageText;
+		/*Info.SubText = MessageText;*/
 
 		Info.HyperlinkText = LOCTEXT("UnrealSoftwareRequirements", "JsonAsAsset Docs");
 		Info.Hyperlink = FSimpleDelegate::CreateStatic([]() { 
@@ -172,9 +171,9 @@ void FJsonAsAssetModule::PluginButtonClicked() {
 
 		if (!IsProcessRunning("JsonAsAssetAPI.exe") && bIsLocalHost) {
 			FNotificationInfo Info(LOCTEXT("JsonAsAssetNotificationTitle", "Local Fetch API"));
-			Info.SubText = LOCTEXT("JsonAsAssetNotificationText",
+			/*Info.SubText = LOCTEXT("JsonAsAssetNotificationText",
 				"Please start the Local Fetch API to use JsonAsAsset with no issues, if you need any assistance figuring out Local Fetch and the settings, please take a look at the documentation:"
-			);
+			);*/
 
 			Info.HyperlinkText = LOCTEXT("UnrealSoftwareRequirements", "JsonAsAsset Docs");
 			Info.Hyperlink = FSimpleDelegate::CreateStatic([]() {
@@ -246,7 +245,7 @@ void FJsonAsAssetModule::RegisterMenus() {
 	FToolMenuOwnerScoped OwnerScoped(this);
 
 	// Register JsonAsAsset toolbar dropdown button
-	UToolMenu* ToolbarMenu = UToolMenus::Get()->ExtendMenu("LevelEditor.LevelEditorToolBar.PlayToolBar");
+	UToolMenu* ToolbarMenu = UToolMenus::Get()->ExtendMenu("LevelEditor.LevelEditorToolBar");
 	FToolMenuSection& Section = ToolbarMenu->FindOrAddSection("JsonAsAsset");
 
 	FToolMenuEntry& Entry = Section.AddEntry(FToolMenuEntry::InitComboButton(
@@ -344,13 +343,13 @@ TSharedRef<SWidget> FJsonAsAssetModule::CreateToolbarDropdown() {
 				InnerMenuBuilder.EndSection();
 			}),
 			false,
-			FSlateIcon(FAppStyle::Get().GetStyleSetName(), "LevelEditor.Tabs.Viewports")
+			FSlateIcon(FEditorStyle::GetStyleSetName(), "LevelEditor.Tabs.Viewports")
 		);
 
 		MenuBuilder.AddMenuEntry(
 			LOCTEXT("JsonAsAssetButton", "Documentation"),
 			LOCTEXT("JsonAsAssetButtonTooltip", "Documentation for JsonAsAsset"),
-			FSlateIcon(FAppStyle::GetAppStyleSetName(), "Icons.Documentation"),
+			FSlateIcon(FEditorStyle::GetStyleSetName(), "Icons.Documentation"),
 			FUIAction(
 				FExecuteAction::CreateLambda([this]() {
 					FString TheURL = "https://github.com/Tectors/JsonAsAsset";
@@ -390,7 +389,7 @@ TSharedRef<SWidget> FJsonAsAssetModule::CreateToolbarDropdown() {
 				MenuBuilder.AddMenuEntry(
 					LOCTEXT("JsonAsAssetButton", "Export Directory Missing"),
 					LOCTEXT("JsonAsAssetButtonTooltip", "Change your exports directory in JsonAsAsset's Plugin Settings"),
-					FSlateIcon(FAppStyle::GetAppStyleSetName(), "Icons.WarningWithColor"),
+					FSlateIcon(FEditorStyle::GetStyleSetName(), "Icons.WarningWithColor"),
 					FUIAction(
 						FExecuteAction::CreateLambda([this]() {
 							// Send user to plugin
@@ -547,7 +546,7 @@ TSharedRef<SWidget> FJsonAsAssetModule::CreateToolbarDropdown() {
 	MenuBuilder.AddMenuEntry(
 		LOCTEXT("JsonAsAssetButton", "Open Plugin Settings"),
 		LOCTEXT("JsonAsAssetButtonTooltip", "Brings you to the JsonAsAsset Settings"),
-		FSlateIcon(FAppStyle::GetAppStyleSetName(), "Icons.Settings"),
+		FSlateIcon(FEditorStyle::GetStyleSetName(), "Icons.Settings"),
 		FUIAction(
 			FExecuteAction::CreateLambda([this]() {
 				// Send user to plugin
@@ -560,7 +559,7 @@ TSharedRef<SWidget> FJsonAsAssetModule::CreateToolbarDropdown() {
 	MenuBuilder.AddMenuEntry(
 		LOCTEXT("JsonAsAssetButton", "Open Message Log"),
 		LOCTEXT("JsonAsAssetButtonTooltip", "Message Log for JsonAsAsset\n> Allows you to see what went wrong, and what went great"),
-		FSlateIcon(FAppStyle::GetAppStyleSetName(), "MessageLog.TabIcon"),
+		FSlateIcon(FEditorStyle::GetStyleSetName(), "MessageLog.TabIcon"),
 		FUIAction(
 			FExecuteAction::CreateLambda([this]() {
 				FMessageLog MessageLogger = FMessageLog(FName("JsonAsAsset"));
@@ -575,7 +574,7 @@ TSharedRef<SWidget> FJsonAsAssetModule::CreateToolbarDropdown() {
 	MenuBuilder.AddMenuEntry(
 		LOCTEXT("JsonAsAssetButton", "About JsonAsAsset"),
 		LOCTEXT("JsonAsAssetButtonTooltip", "More information about JsonAsAsset"),
-		FSlateIcon(FAppStyle::GetAppStyleSetName(), "MessageLog.Action"),
+		FSlateIcon(FEditorStyle::GetStyleSetName(), "MessageLog.Action"),
 		FUIAction(
 			FExecuteAction::CreateLambda([this]() {
 				TSharedPtr<SWindow> AboutWindow =
@@ -624,7 +623,7 @@ void SAboutJsonAsAsset::Construct(const FArguments& InArgs) {
 	ChildSlot
 	[
 		SNew(SBorder)
-		.Padding(16.f).BorderImage(FAppStyle::Get().GetBrush("Brushes.Panel"))
+		.Padding(16.f).BorderImage(FEditorStyle::Get().GetBrush("Brushes.Panel"))
 		[
 			SNew(SVerticalBox)
 
@@ -647,8 +646,8 @@ void SAboutJsonAsAsset::Construct(const FArguments& InArgs) {
 					.Padding(0.f, 4.f)
 					[
 						SNew(STextBlock)
-						.ColorAndOpacity(FStyleColors::ForegroundHover)
-						.Font(FAppStyle::Get().GetFontStyle("AboutScreen.TitleFont"))
+						.ColorAndOpacity(FLinearColor( 0.0f, 0.5f, 0.0f ))
+						.Font(FEditorStyle::Get().GetFontStyle("AboutScreen.TitleFont"))
 						.Text(Title)
 					]
 
@@ -657,7 +656,7 @@ void SAboutJsonAsAsset::Construct(const FArguments& InArgs) {
 					[
 						SNew(SEditableText)
 						.IsReadOnly(true)
-						.ColorAndOpacity(FStyleColors::ForegroundHover)
+						.ColorAndOpacity(FLinearColor( 0.0f, 0.5f, 0.0f ))
 						.Text(Version)
 					]
 				]
@@ -669,7 +668,7 @@ void SAboutJsonAsAsset::Construct(const FArguments& InArgs) {
 				.Padding(0.0f, 0.0f, 8.f, 0.0f)
 				[
 					SAssignNew(FModelButton, SButton)
-						.ButtonStyle(FAppStyle::Get(), "SimpleButton")
+						.ButtonStyle(FEditorStyle::Get(), "SimpleButton")
 						.OnClicked(this, &SAboutJsonAsAsset::OnFModelButtonClicked)
 						.ContentPadding(0.f).ToolTipText(LOCTEXT("FModelButton", "FModel Application"))
 					[
@@ -686,7 +685,7 @@ void SAboutJsonAsAsset::Construct(const FArguments& InArgs) {
 					.Padding(0.0f, 0.0f, 8.f, 0.0f)
 					[
 						SAssignNew(GithubButton, SButton)
-						.ButtonStyle(FAppStyle::Get(), "SimpleButton")
+						.ButtonStyle(FEditorStyle::Get(), "SimpleButton")
 						.OnClicked(this, &SAboutJsonAsAsset::OnGithubButtonClicked)
 						.ContentPadding(0.f).ToolTipText(LOCTEXT("GithubButton", "JsonAsAsset Github Page"))
 					[
@@ -702,7 +701,7 @@ void SAboutJsonAsAsset::Construct(const FArguments& InArgs) {
 			.AutoHeight()
 			[
 				SNew(SListView<TSharedRef<FLineDefinition>>)
-				.ListViewStyle(&FAppStyle::Get().GetWidgetStyle<FTableViewStyle>("SimpleListView"))
+				/*.ListViewStyle(&FEditorStyle::Get().GetWidgetStyle<FTableViewStyle>("SimpleListView"))*/
 				.ListItemsSource(&AboutLines)
 				.OnGenerateRow(this, &SAboutJsonAsAsset::MakeAboutTextItemWidget)
 				.SelectionMode(ESelectionMode::None)
@@ -725,13 +724,13 @@ void SAboutJsonAsAsset::Construct(const FArguments& InArgs) {
 TSharedRef<ITableRow> SAboutJsonAsAsset::MakeAboutTextItemWidget(TSharedRef<FLineDefinition> Item, const TSharedRef<STableViewBase>& OwnerTable) {
 	if (Item->Text.IsEmpty())
 		return SNew(STableRow<TSharedPtr<FString>>, OwnerTable)
-			.Style(&FAppStyle::Get().GetWidgetStyle<FTableRowStyle>("SimpleTableView.Row"))
+			.Style(&FEditorStyle::Get().GetWidgetStyle<FTableRowStyle>("SimpleTableView.Row"))
 			.Padding(6.0f) [
 				SNew(SSpacer)
 			];
 	else
 		return SNew(STableRow<TSharedPtr<FString>>, OwnerTable)
-			.Style(&FAppStyle::Get().GetWidgetStyle<FTableRowStyle>("SimpleTableView.Row"))
+			.Style(&FEditorStyle::Get().GetWidgetStyle<FTableRowStyle>("SimpleTableView.Row"))
 			.Padding(Item->Margin) [
 				SNew(STextBlock)
 				.LineHeightPercentage(1.3f)

@@ -55,7 +55,7 @@ bool USoundCueImporter::ImportData() {
 				SoundWavePlayer = Cast<USoundNodeWavePlayer>(SoundNode);
 
 				if (const TSharedPtr<FJsonObject>* SoundWave; NodeProperties->TryGetObjectField("SoundWaveAssetPtr", SoundWave)) {
-					TObjectPtr<USoundWave> Wave; {
+					USoundWave* Wave; {
 						LoadObject(SoundWave, Wave);
 					}
 

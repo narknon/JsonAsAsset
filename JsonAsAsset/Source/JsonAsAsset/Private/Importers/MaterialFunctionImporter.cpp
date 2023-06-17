@@ -10,7 +10,7 @@ bool UMaterialFunctionImporter::ImportData() {
 		// Create Material Function Factory (factory automatically creates the MF)
 		UMaterialFunctionFactoryNew* MaterialFunctionFactory = NewObject<UMaterialFunctionFactoryNew>();
 		UMaterialFunction* MaterialFunction = Cast<UMaterialFunction>(MaterialFunctionFactory->FactoryCreateNew(UMaterialFunction::StaticClass(), OutermostPkg, *FileName, RF_Standalone | RF_Public, nullptr, GWarn));
-		MaterialFunction->GetExpressionCollection().Empty();
+		MaterialFunction->FunctionExpressions.Empty();
 
 		// Handle edit changes, and add it to the content browser
 		if (!HandleAssetCreation(MaterialFunction)) return false;

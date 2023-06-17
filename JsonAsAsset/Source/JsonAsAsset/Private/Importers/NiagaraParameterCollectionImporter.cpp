@@ -5,7 +5,7 @@
 #include "Dom/JsonObject.h"
 #include "Materials/MaterialParameterCollection.h"
 
-void UNiagaraParameterCollectionDerived::SetSourceMaterialCollection(TObjectPtr<UMaterialParameterCollection> MaterialParameterCollection) {
+void UNiagaraParameterCollectionDerived::SetSourceMaterialCollection(UMaterialParameterCollection* MaterialParameterCollection) {
     this->SourceMaterialCollection = MaterialParameterCollection;
 }
 
@@ -30,7 +30,7 @@ bool UNiagaraParameterCollectionImporter::ImportData() {
 
         NiagaraParameterCollection->SetCompileId(FGuid(Properties->GetStringField("CompileId")));
 
-        TObjectPtr<UMaterialParameterCollection> MaterialParameterCollection;
+        UMaterialParameterCollection* MaterialParameterCollection = nullptr;
         if (const TSharedPtr<FJsonObject>* SourceMaterialCollection; Properties->TryGetObjectField("SourceMaterialCollection", SourceMaterialCollection))
             LoadObject(SourceMaterialCollection, MaterialParameterCollection);
 

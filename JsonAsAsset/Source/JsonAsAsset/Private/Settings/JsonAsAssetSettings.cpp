@@ -1,5 +1,6 @@
 #include "JsonAsAssetSettings.h"
 
+#include "DetailCategoryBuilder.h"
 #include "DetailLayoutBuilder.h"
 #include "DetailWidgetRow.h"
 #include "Widgets/Input/SButton.h"
@@ -66,8 +67,8 @@ void FJsonAsAssetSettingsDetails::CustomizeDetails(IDetailLayoutBuilder& DetailB
 			[
 				SNew(SRichTextBlock)
 				.Text(LOCTEXT("NOTICEMessage", "<RichTextBlock.TextHighlight>NOTE:</> Please make sure you are using Unreal Engine's file/directory selector, if not, please replace the character \"\\\" with \"/\" so issues do not happen.\n> The character casuses a issue on parsing the path correctly, so it may make shadow folders in your browser and assets not importing correctly."))
-				.TextStyle(FAppStyle::Get(), "MessageLog")
-				.DecoratorStyleSet(&FAppStyle::Get())
+				.TextStyle(FEditorStyle::Get(), "MessageLog")
+				.DecoratorStyleSet(&FEditorStyle::Get())
 				.AutoWrapText(true)
 			]
 		]
@@ -87,16 +88,16 @@ void FJsonAsAssetSettingsDetails::CustomizeDetails(IDetailLayoutBuilder& DetailB
 				UJsonAsAssetSettings* PluginSettings = GetMutableDefault<UJsonAsAssetSettings>();
 				FHttpModule* HttpModule = &FHttpModule::Get();
 
-				const TSharedRef<IHttpRequest> Request = HttpModule->CreateRequest();
+				/*const TSharedRef<IHttpRequest> Request = HttpModule->CreateRequest();
 				Request->SetURL("https://fortnitecentral.genxgames.gg/api/v1/aes");
 				Request->SetVerb(TEXT("GET"));
 
 				const TSharedPtr<IHttpResponse> Response = FRemoteUtilities::ExecuteRequestSync(Request);
-				if (!Response.IsValid()) return FReply::Handled();
+				if (!Response.IsValid()) return FReply::Handled();*/
 
 				PluginSettings->DynamicKeys.Empty();
 
-				TSharedRef<TJsonReader<>> JsonReader = TJsonReaderFactory<>::Create(Response->GetContentAsString());
+				TSharedRef<TJsonReader<>> JsonReader = TJsonReaderFactory<>::Create("");
 				if (TSharedPtr<FJsonObject> JsonObject; FJsonSerializer::Deserialize(JsonReader, JsonObject)) {
 					PluginSettings->ArchiveKey = JsonObject->GetStringField("mainKey");
 
@@ -127,14 +128,14 @@ void FJsonAsAssetSettingsDetails::CustomizeDetails(IDetailLayoutBuilder& DetailB
 						}
 					}
 					
-					const TSharedRef<IHttpRequest> MappingsURLRequest = HttpModule->CreateRequest();
+					/*const TSharedRef<IHttpRequest> MappingsURLRequest = HttpModule->CreateRequest();
 					MappingsURLRequest->SetURL("https://fortnitecentral.genxgames.gg/api/v1/mappings");
 					MappingsURLRequest->SetVerb(TEXT("GET"));
 
 					const TSharedPtr<IHttpResponse> MappingsURLResponse = FRemoteUtilities::ExecuteRequestSync(MappingsURLRequest);
-					if (!MappingsURLResponse.IsValid()) return FReply::Handled();
+					if (!MappingsURLResponse.IsValid()) return FReply::Handled();*/
 
-					JsonReader = TJsonReaderFactory<>::Create(MappingsURLResponse->GetContentAsString());
+					JsonReader = TJsonReaderFactory<>::Create("");
 					if (TArray<TSharedPtr<FJsonValue>> JsonArray; FJsonSerializer::Deserialize(JsonReader, JsonArray)) {
 						TSharedPtr<FJsonValue> Value; {
 							if (JsonArray.IsValidIndex(1))

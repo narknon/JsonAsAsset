@@ -8,7 +8,7 @@
 
 class UNiagaraParameterCollectionDerived : public UNiagaraParameterCollection {
 public:
-    void SetSourceMaterialCollection(TObjectPtr<UMaterialParameterCollection> MaterialParameterCollection);
+    void SetSourceMaterialCollection(UMaterialParameterCollection* MaterialParameterCollection);
     void SetCompileId(FGuid Guid);
     void SetNamespace(FName InNamespace);
     void AddAParameter(FNiagaraVariable Parameter);
